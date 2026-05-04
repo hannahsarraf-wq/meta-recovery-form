@@ -23,9 +23,10 @@ export default function MetaRecoveryForm() {
   });
 
   const [logo, setLogo] = useState(null);
-  const [signature, setSignature] = useState(null);
+  const [businessDocument, setBusinessDocument] = useState(null);
   const [driversLicense, setDriversLicense] = useState(null);
   const [zoom, setZoom] = useState(95);
+  const [showDownloadBanner, setShowDownloadBanner] = useState(false);
 
   // Collapsible section states (all open by default)
   const [sections, setSections] = useState({
@@ -44,7 +45,7 @@ export default function MetaRecoveryForm() {
 
   const handleFileChange = (name, value) => {
     if (name === 'logo') setLogo(value);
-    if (name === 'signature') setSignature(value);
+    if (name === 'businessDocument') setBusinessDocument(value);
     if (name === 'driversLicense') setDriversLicense(value);
   };
 
@@ -72,8 +73,9 @@ export default function MetaRecoveryForm() {
         portfolioID: '',
       });
       setLogo(null);
-      setSignature(null);
+      setBusinessDocument(null);
       setDriversLicense(null);
+      setShowDownloadBanner(false);
     }
   };
 
@@ -84,6 +86,22 @@ export default function MetaRecoveryForm() {
   return (
     <>
       <Header onReset={handleReset} onSaveAndSend={handleSaveAndSend} />
+
+      {showDownloadBanner && (
+        <div
+          className="print:hidden"
+          style={{
+            backgroundColor: '#EFF6FF',
+            borderBottom: '1px solid #BFDBFE',
+            padding: 'var(--sp-3) var(--sp-6)',
+          }}
+        >
+          <div style={{ maxWidth: '1600px', margin: '0 auto', fontSize: 'var(--fs-sm)' }}>
+            <strong>Next step:</strong> Have the client print and sign the letter in the space below where it says &ldquo;Signature.&rdquo;{' '}
+            <em>The signature must match the one on the driver&rsquo;s license.</em>
+          </div>
+        </div>
+      )}
 
       <div
         style={{
@@ -229,6 +247,17 @@ export default function MetaRecoveryForm() {
             isOpen={sections.portfolio}
             onToggle={() => toggleSection('portfolio')}
           >
+            <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--muted)', margin: 0 }}>
+              Not sure how to find your Portfolio ID?{' '}
+              <a
+                href="https://docs.google.com/document/d/1lMcBXv_7tUx-OA2blh0H4XVadxFBu69emJVk5Ftv2ro/edit?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'var(--brand-accent)' }}
+              >
+                View step-by-step instructions
+              </a>
+            </p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
               <FormField
                 label="Portfolio Name"
@@ -257,12 +286,13 @@ export default function MetaRecoveryForm() {
           >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
               <FileUpload
-                label="Signature"
-                name="signature"
-                value={signature}
+                label="Business Document of Choice (utility bill, business license, or similar official business document)"
+                name="businessDocument"
+                value={businessDocument}
                 onChange={handleFileChange}
+                accept="image/*,.pdf"
                 required
-                helperText="Upload an image of your signature"
+                helperText="Upload a scan or photo of your supporting business document"
               />
               <FileUpload
                 label="Driver's License"
@@ -278,11 +308,11 @@ export default function MetaRecoveryForm() {
 
         {/* Right Column - Preview Pane */}
         <div className="card" style={{ height: 'calc(100vh - 120px)', position: 'sticky', top: 'var(--sp-6)', padding: 0, overflow: 'hidden' }}>
-          <PreviewPane zoom={zoom} onZoomChange={setZoom}>
+          <PreviewPane zoom={zoom} onZoomChange={setZoom} onDownload={() => setShowDownloadBanner(true)}>
             <LetterPreview
               formData={formData}
               logo={logo}
-              signature={signature}
+              businessDocument={businessDocument}
               driversLicense={driversLicense}
             />
           </PreviewPane>
@@ -338,7 +368,7 @@ export default function MetaRecoveryForm() {
         <LetterPreview
           formData={formData}
           logo={logo}
-          signature={signature}
+          businessDocument={businessDocument}
           driversLicense={driversLicense}
         />
       </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, FileText } from 'lucide-react';
 
 function FileUpload({
   label,
@@ -81,17 +81,24 @@ function FileUpload({
             backgroundColor: 'var(--bg-card)',
           }}
         >
-          <img
-            src={value}
-            alt="Preview"
-            style={{
-              width: '100%',
-              height: 'auto',
-              maxHeight: '200px',
-              objectFit: 'contain',
-              display: 'block',
-            }}
-          />
+          {value.startsWith('data:application/pdf') ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', padding: 'var(--sp-4)', color: 'var(--muted)' }}>
+              <FileText size={32} />
+              <span style={{ fontSize: 'var(--fs-sm)' }}>PDF document uploaded</span>
+            </div>
+          ) : (
+            <img
+              src={value}
+              alt="Preview"
+              style={{
+                width: '100%',
+                height: 'auto',
+                maxHeight: '200px',
+                objectFit: 'contain',
+                display: 'block',
+              }}
+            />
+          )}
           <button
             type="button"
             onClick={handleClear}

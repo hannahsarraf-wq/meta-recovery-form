@@ -1,6 +1,6 @@
 import React from 'react';
 
-function LetterPreview({ formData, logo, signature, driversLicense }) {
+function LetterPreview({ formData, logo, businessDocument, driversLicense }) {
   return (
     <div
       style={{
@@ -154,30 +154,10 @@ function LetterPreview({ formData, logo, signature, driversLicense }) {
       {/* Signature Section */}
       <div style={{ marginBottom: '32px' }}>
         <div style={{ marginBottom: '8px' }}>Signature,</div>
-        {signature ? (
-          <div style={{ marginBottom: '16px' }}>
-            <img
-              src={signature}
-              alt="Signature"
-              style={{
-                maxWidth: '200px',
-                height: '60px',
-                objectFit: 'contain',
-              }}
-            />
-          </div>
-        ) : (
-          <div
-            style={{
-              marginBottom: '16px',
-              color: '#9CA3AF',
-              fontStyle: 'italic',
-              fontSize: '10pt',
-            }}
-          >
-            [Signature will appear here]
-          </div>
-        )}
+        <div style={{ height: '60px', borderBottom: '1px solid #D1D5DB', marginBottom: '8px', width: '250px' }} />
+        <div style={{ fontSize: '9pt', color: '#6B7280', fontStyle: 'italic' }}>
+          * Signature must match the signature on the attached driver's license
+        </div>
       </div>
 
       {/* Driver's License Section */}
@@ -209,16 +189,34 @@ function LetterPreview({ formData, logo, signature, driversLicense }) {
             />
           </div>
         ) : (
-          <div
-            style={{
-              color: '#9CA3AF',
-              fontStyle: 'italic',
-              fontSize: '10pt',
-            }}
-          >
+          <div style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '10pt' }}>
             [Please include copy of Driver's License here]
           </div>
         )}
+
+        <div style={{ marginTop: '24px' }}>
+          <div style={{ fontWeight: 600, marginBottom: '16px' }}>
+            Supporting Documentation: Business Document
+          </div>
+          {businessDocument && !businessDocument.startsWith('data:application/pdf') ? (
+            <img
+              src={businessDocument}
+              alt="Business Document"
+              style={{
+                maxWidth: '100%',
+                maxHeight: '400px',
+                border: '1px solid #D1D5DB',
+                objectFit: 'contain',
+              }}
+            />
+          ) : (
+            <div style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '10pt' }}>
+              {businessDocument
+                ? '[Business document attached as PDF]'
+                : '[Please include copy of business document here]'}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

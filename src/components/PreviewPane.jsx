@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { ZoomIn, ZoomOut, Maximize2, Download } from 'lucide-react';
 import html2pdf from 'html2pdf.js';
 
-function PreviewPane({ children, zoom, onZoomChange }) {
+function PreviewPane({ children, zoom, onZoomChange, onDownload }) {
   const contentRef = useRef(null);
 
   const handleZoomIn = () => {
@@ -31,6 +31,7 @@ function PreviewPane({ children, zoom, onZoomChange }) {
 
     try {
       await html2pdf().set(opt).from(element).save();
+      if (onDownload) onDownload();
     } catch (error) {
       console.error('Error generating PDF:', error);
       alert('Failed to generate PDF. Please try again.');
