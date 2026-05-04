@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import CollapsibleSection from './components/CollapsibleSection';
 import FormField from './components/FormField';
@@ -27,6 +27,18 @@ export default function MetaRecoveryForm() {
   const [driversLicense, setDriversLicense] = useState(null);
   const [zoom, setZoom] = useState(95);
   const [showDownloadBanner, setShowDownloadBanner] = useState(false);
+
+  const [drafts, setDrafts] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('metaRecoveryDrafts') || '[]');
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('metaRecoveryDrafts', JSON.stringify(drafts));
+  }, [drafts]);
 
   // Collapsible section states (all open by default)
   const [sections, setSections] = useState({
@@ -79,13 +91,51 @@ export default function MetaRecoveryForm() {
     }
   };
 
-  const handleSaveAndSend = () => {
-    alert('This feature is coming soon! For now, use the Download PDF button in the preview pane.');
+  const handleSaveDraft = () => {
+    const name = formData.businessName.trim() || 'Untitled Draft';
+    const draft = {
+      id: Date.now().toString(),
+      name,
+      savedAt: new Date().toISOString(),
+      formData,
+      logo,
+      businessDocument,
+      driversLicense,
+    };
+    setDrafts((prev) => [draft, ...prev]);
+  };
+
+  const handleLoadDraft = (draft) => {
+    setFormData(draft.formData);
+    setLogo(draft.logo);
+    setBusinessDocument(draft.businessDocument);
+    setDriversLicense(draft.driversLicense);
+  };
+
+  const handleDuplicateDraft = (draft) => {
+    const copy = {
+      ...draft,
+      id: Date.now().toString(),
+      name: `${draft.name} (copy)`,
+      savedAt: new Date().toISOString(),
+    };
+    setDrafts((prev) => [copy, ...prev]);
+  };
+
+  const handleDeleteDraft = (draftId) => {
+    setDrafts((prev) => prev.filter((d) => d.id !== draftId));
   };
 
   return (
     <>
-      <Header onReset={handleReset} onSaveAndSend={handleSaveAndSend} />
+      <Header
+        onReset={handleReset}
+        onSaveDraft={handleSaveDraft}
+        drafts={drafts}
+        onLoadDraft={handleLoadDraft}
+        onDuplicateDraft={handleDuplicateDraft}
+        onDeleteDraft={handleDeleteDraft}
+      />
 
       {showDownloadBanner && (
         <div
